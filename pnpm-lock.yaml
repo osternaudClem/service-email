@@ -35,7 +35,13 @@ importers:
       resend:
         specifier: ^4.7.0
         version: 4.7.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      zod:
+        specifier: ^4.0.10
+        version: 4.0.10
     devDependencies:
+      '@hono/zod-validator':
+        specifier: ^0.7.2
+        version: 0.7.2(hono@4.8.9)(zod@4.0.10)
       '@react-email/components':
         specifier: ^0.3.2
         version: 0.3.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -479,6 +485,12 @@ packages:
     engines: {node: '>=18.14.1'}
     peerDependencies:
       hono: ^4
+
+  '@hono/zod-validator@0.7.2':
+    resolution: {integrity: sha512-ub5eL/NeZ4eLZawu78JpW/J+dugDAYhwqUIdp9KYScI6PZECij4Hx4UsrthlEUutqDDhPwRI0MscUfNkvn/mqQ==}
+    peerDependencies:
+      hono: '>=3.9.0'
+      zod: ^3.25.0 || ^4.0.0
 
   '@img/sharp-darwin-arm64@0.34.1':
     resolution: {integrity: sha512-pn44xgBtgpEbZsu+lWf2KNb6OAf70X68k+yk69Ic2Xz11zHR/w24/U49XT7AeRwJ0Px+mhALhU5LPci1Aymk7A==}
@@ -2777,6 +2789,9 @@ packages:
   zod@3.24.3:
     resolution: {integrity: sha512-HhY1oqzWCQWuUqvBFnsyrtZRhyPeR7SUGv+C4+MsisMuVfSPx8HpwWqH8tRahSlt6M3PiFAcoeFhZAqIXTxoSg==}
 
+  zod@4.0.10:
+    resolution: {integrity: sha512-3vB+UU3/VmLL2lvwcY/4RV2i9z/YU0DTV/tDuYjrwmx5WeJ7hwy+rGEEx8glHp6Yxw7ibRbKSaIFBgReRPe5KA==}
+
 snapshots:
 
   '@alloc/quick-lru@5.2.0': {}
@@ -3080,6 +3095,11 @@ snapshots:
   '@hono/node-server@1.17.1(hono@4.8.9)':
     dependencies:
       hono: 4.8.9
+
+  '@hono/zod-validator@0.7.2(hono@4.8.9)(zod@4.0.10)':
+    dependencies:
+      hono: 4.8.9
+      zod: 4.0.10
 
   '@img/sharp-darwin-arm64@0.34.1':
     optionalDependencies:
@@ -5384,3 +5404,5 @@ snapshots:
   yoctocolors@2.1.1: {}
 
   zod@3.24.3: {}
+
+  zod@4.0.10: {}

@@ -9,6 +9,7 @@ import { FROM, INFORMATIONS, CONTENT } from "../../utils/azelysseUtils";
 import AfterMeeting from "../../emails/azelysse/AfterMeeting";
 import CancelMeeting from "../../emails/azelysse/CancelMeeting";
 import type { AzelysseMeeting } from "../../types/azelysse.types";
+import UpdateMeeting from "../../emails/azelysse/UpdateMeeting";
 
 const CLIENT = {
   first_name: "Clement",
@@ -42,7 +43,7 @@ const MEETING: AzelysseMeeting = {
 
 export const sendConfirmationEmail = async (c: Context) => {
   try {
-    const meeting = MEETING;
+    const meeting = await c.req.json();
 
     const formatedDate = formatInTimeZone(
       meeting.start_time,
@@ -55,10 +56,10 @@ export const sendConfirmationEmail = async (c: Context) => {
 
     const html = await render(
       <NewMeeting
-        meeting={MEETING}
+        meeting={meeting}
         informations={INFORMATIONS}
-        linkUpdate={`https://azelysse.fr/modification?id=${MEETING.id}`}
-        linkCancel={`https://azelysse.fr/modification?id=${MEETING.id}`}
+        linkUpdate={`https://azelysse.fr/modification?id=${meeting.id}`}
+        linkCancel={`https://azelysse.fr/modification?id=${meeting.id}`}
         content={CONTENT}
       />,
       { pretty: true }
@@ -66,7 +67,7 @@ export const sendConfirmationEmail = async (c: Context) => {
 
     await resend.emails.send({
       from: `Azelysse Piercing <${FROM}>`,
-      to: [MEETING.client?.email],
+      to: [meeting.client?.email],
       subject: `Confirmation de votre rendez-vous ${formatedDate} | Azelysse Piercing`,
       html,
       attachments: [
@@ -86,8 +87,49 @@ export const sendConfirmationEmail = async (c: Context) => {
   }
 };
 
+export const sendUpdateMeetingEmail = async (c: Context) => {
+  try {
+    const meeting = await c.req.json();
+
+    const formatedDate = formatInTimeZone(
+      meeting.start_time,
+      "Europe/Paris",
+      "EEEE dd MMMM yyyy à HH:mm",
+      { locale: fr }
+    );
+
+    const html = await render(
+      <UpdateMeeting
+        meeting={meeting}
+        informations={INFORMATIONS}
+        linkUpdate={`https://azelysse.fr/modification?id=${meeting.id}`}
+        linkCancel={`https://azelysse.fr/modification?id=${meeting.id}`}
+        content={CONTENT}
+      />,
+      { pretty: true }
+    );
+
+    await resend.emails.send({
+      from: `Azelysse Piercing <${FROM}>`,
+      to: [meeting.client?.email],
+      subject: `Modification de votre rendez-vous ${formatedDate} | Azelysse Piercing`,
+      html,
+    });
+
+    return c.json({ success: true });
+  } catch (error) {
+    console.error("Error sending update email:", error);
+    return c.json(
+      { success: false, error: "Failed to send update email" },
+      500
+    );
+  }
+};
+
 export const sendCancelMeetingEmail = async (c: Context) => {
   try {
+    const meeting = await c.req.json();
+
     const formatedDate = formatInTimeZone(
       MEETING.start_time,
       "Europe/Paris",
@@ -95,12 +137,12 @@ export const sendCancelMeetingEmail = async (c: Context) => {
       { locale: fr }
     );
 
-    if (!MEETING.client?.email) {
+    if (!meeting.client?.email) {
       return;
     }
 
     const html = await render(
-      <CancelMeeting meeting={MEETING} content={CONTENT} />,
+      <CancelMeeting meeting={meeting} content={CONTENT} />,
       {
         pretty: true,
       }
@@ -108,7 +150,7 @@ export const sendCancelMeetingEmail = async (c: Context) => {
 
     await resend.emails.send({
       from: `Azelysse Piercing <${FROM}>`,
-      to: [MEETING.client?.email],
+      to: [meeting.client?.email],
       subject: `Annulation de votre rendez-vous ${formatedDate} | Azelysse Piercing`,
       html,
     });
@@ -125,19 +167,23 @@ export const sendCancelMeetingEmail = async (c: Context) => {
 
 export const sendAfterMeetingEmail = async (c: Context) => {
   try {
+    const client = await c.req.json();
+
     const html = await render(
-      <AfterMeeting firstname={CLIENT.first_name} content={CONTENT} />,
+      <AfterMeeting firstname={client.first_name} content={CONTENT} />,
       {
         pretty: true,
       }
     );
 
-    return await resend.emails.send({
+    await resend.emails.send({
       from: `Azelysse Piercing <${FROM}>`,
-      to: [CLIENT.email],
+      to: [client.email],
       subject: `Laissez un avis sur votre dernier rendez-vous | Azelysse Piercing`,
       html,
     });
+
+    return c.json({ success: true });
   } catch (error) {
     console.error("Error sending after meeting email:", error);
     return c.json(
