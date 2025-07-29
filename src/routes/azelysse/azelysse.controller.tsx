@@ -43,10 +43,10 @@ const MEETING: AzelysseMeeting = {
 
 export const sendConfirmationEmail = async (c: Context) => {
   try {
-    const meeting = await c.req.json();
+    const { meeting } = await c.req.json();
 
     const formatedDate = formatInTimeZone(
-      meeting.start_time,
+      new Date(meeting.start_time),
       "Europe/Paris",
       "EEEE dd MMMM yyyy à HH:mm",
       { locale: fr }
@@ -89,10 +89,10 @@ export const sendConfirmationEmail = async (c: Context) => {
 
 export const sendUpdateMeetingEmail = async (c: Context) => {
   try {
-    const meeting = await c.req.json();
+    const { meeting } = await c.req.json();
 
     const formatedDate = formatInTimeZone(
-      meeting.start_time,
+      new Date(meeting.start_time),
       "Europe/Paris",
       "EEEE dd MMMM yyyy à HH:mm",
       { locale: fr }
@@ -128,10 +128,10 @@ export const sendUpdateMeetingEmail = async (c: Context) => {
 
 export const sendCancelMeetingEmail = async (c: Context) => {
   try {
-    const meeting = await c.req.json();
+    const { meeting } = await c.req.json();
 
     const formatedDate = formatInTimeZone(
-      MEETING.start_time,
+      new Date(meeting.start_time),
       "Europe/Paris",
       "EEEE dd MMMM yyyy à HH:mm",
       { locale: fr }
@@ -167,7 +167,7 @@ export const sendCancelMeetingEmail = async (c: Context) => {
 
 export const sendAfterMeetingEmail = async (c: Context) => {
   try {
-    const client = await c.req.json();
+    const { client } = await c.req.json();
 
     const html = await render(
       <AfterMeeting firstname={client.first_name} content={CONTENT} />,

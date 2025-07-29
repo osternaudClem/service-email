@@ -18,11 +18,11 @@ export const AzelysseProductSchema = z.object({
 
 export const AzelyssePrestationSchema = z.object({
   service: AzelysseServiceSchema,
-  product: AzelysseProductSchema.optional(),
+  product: AzelysseProductSchema.optional().nullable(),
 });
 
 export const AzelysseMeetingSchema = z.object({
-  body: z.object({
+  meeting: z.object({
     id: z.string(),
     start_time: z.union([z.string(), z.date()]),
     end_time: z.union([z.string(), z.date()]).optional(),

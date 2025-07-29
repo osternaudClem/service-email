@@ -15,20 +15,20 @@ import {
 const router = new Hono();
 
 router.post(
-  "/new-metting",
-  zValidator("json", AzelysseMeetingSchema.shape.body, zodErrorHandler),
+  "/new-meeting",
+  zValidator("json", AzelysseMeetingSchema, zodErrorHandler),
   sendConfirmationEmail
 );
 
 router.post(
   "/update-meeting",
-  zValidator("json", AzelysseMeetingSchema.shape.body, zodErrorHandler),
+  zValidator("json", AzelysseMeetingSchema, zodErrorHandler),
   sendUpdateMeetingEmail
 );
 
 router.post(
   "/cancel-meeting",
-  zValidator("json", AzelysseMeetingSchema.shape.body, zodErrorHandler),
+  zValidator("json", AzelysseMeetingSchema, zodErrorHandler),
   sendCancelMeetingEmail
 );
 
