@@ -11,6 +11,7 @@ export const accessMiddleware = (): MiddlewareHandler => {
     const clientKey = c.req.header("x-api-key");
 
     if (!clientKey || clientKey !== apiKey) {
+      console.error("Unauthorized access attempt");
       return c.json({ message: "Unauthorized" }, 401);
     }
 
