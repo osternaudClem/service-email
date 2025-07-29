@@ -5,6 +5,9 @@ import { routes } from "./routes";
 import { logger } from "hono/logger";
 import { accessMiddleware } from "./middlewares/accessMiddleware";
 import { captureException, flush } from "./instrument";
+import { metricsMiddleware } from "./middlewares/metricsMiddleware";
+import { register } from "prom-client";
+import { logginLokiMiddleware } from "./middlewares/logginLokiMiddleware";
 dotenv.config();
 
 // Extend Hono Context to include custom variables
@@ -37,7 +40,16 @@ app.use("*", async (c, next) => {
   await next();
 });
 
-app.use(logger());
+app.use("*", async (c, next) => {
+  if (c.req.path === "/metrics") {
+    return await next();
+  }
+
+  return logger()(c, next);
+});
+
+app.use(logginLokiMiddleware);
+app.use("*", metricsMiddleware);
 app.use(accessMiddleware());
 
 app.get("/", (c) => {
@@ -54,14 +66,22 @@ app.post("/capture-sentry", async (c) => {
     // simulate something going wrong
     JSON.parse("this is not valid JSON");
   } catch (err) {
-    // captureException(err);
-    // await new Promise((resolve) => setTimeout(resolve, 1000));
     throw new Error("Manually captured an exception to GlitchTip");
   }
   return c.text("This will never run");
 });
 
 app.route("/", routes);
+
+app.get("/metrics", async (c) => {
+  const metrics = await register.metrics();
+
+  const headers: HeadersInit = {
+    "Content-Type": register.contentType,
+  };
+
+  return c.text(metrics, 200, headers);
+});
 
 app.onError(async (err, c) => {
   const ip = c.get("ip");
