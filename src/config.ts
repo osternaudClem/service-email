@@ -8,6 +8,7 @@ const EnvKeys = Object.freeze({
   NODE_ENV: "NODE_ENV",
   PORT: "PORT",
   GLITCHTIP_DSN: "GLITCHTIP_DSN",
+  LOKI_URL: "LOKI_URL",
 });
 
 type EnvKey = keyof typeof EnvKeys;
@@ -39,5 +40,8 @@ export const config = {
   },
   sentry: {
     dsn: getEnv(EnvKeys.GLITCHTIP_DSN),
+  },
+  loki: {
+    url: getEnv(EnvKeys.LOKI_URL),
   },
 };
