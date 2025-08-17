@@ -30,3 +30,10 @@ export const AzelysseMeetingSchema = z.object({
     prestations: z.array(AzelyssePrestationSchema),
   }),
 });
+
+export const AzelysseContactSchema = z.object({
+  first_name: z.string(),
+  last_name: z.string(),
+  email: z.email(),
+  message: z.string().min(1, "Message cannot be empty"),
+});

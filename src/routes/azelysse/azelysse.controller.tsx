@@ -8,38 +8,7 @@ import { resend } from "../../lib/resend";
 import { FROM, INFORMATIONS, CONTENT } from "../../utils/azelysseUtils";
 import AfterMeeting from "../../emails/azelysse/AfterMeeting";
 import CancelMeeting from "../../emails/azelysse/CancelMeeting";
-import type { AzelysseMeeting } from "../../types/azelysse.types";
 import UpdateMeeting from "../../emails/azelysse/UpdateMeeting";
-
-const CLIENT = {
-  first_name: "Clement",
-  email: "osternaud.clement@pm.me",
-};
-
-const MEETING: AzelysseMeeting = {
-  id: "e7b8c2a0-9f4e-4a7b-8e2d-1c2f3a4b5c6d", // Example UUID
-  start_time: new Date("2024-02-01T14:00:00Z"),
-  client: CLIENT,
-  prestations: [
-    {
-      service: {
-        name: "Pose de bijoux",
-        duration: 20,
-      },
-    },
-    {
-      service: {
-        name: "Acte de piercing",
-        duration: 20,
-      },
-      product: {
-        name: "Hélix",
-        price: 40,
-        aget_restriction: 16,
-      },
-    },
-  ],
-};
 
 export const sendConfirmationEmail = async (c: Context) => {
   try {
@@ -188,6 +157,43 @@ export const sendAfterMeetingEmail = async (c: Context) => {
     console.error("Error sending after meeting email:", error);
     return c.json(
       { success: false, error: "Failed to send after meeting email" },
+      500
+    );
+  }
+};
+
+export const sendContactEmail = async (c: Context) => {
+  try {
+    const { first_name, last_name, email, message } = await c.req.json();
+
+    const html = await render(
+      <div>
+        <p>
+          Vous avez reçu un nouveau message de contact de{" "}
+          <strong>
+            {first_name} {last_name}
+          </strong>{" "}
+          :
+        </p>
+        <p>Email : {email}</p>
+        <p>Message : {message}</p>
+      </div>,
+      { pretty: true }
+    );
+
+    await resend.emails.send({
+      from: `Azelysse Piercing <${FROM}>`,
+      // to: [CONTENT.contact_email],
+      to: ["osternaud.clement@pm.me"],
+      subject: `[CONTACT] Nouveau message de contact de ${first_name} ${last_name}`,
+      html,
+    });
+
+    return c.json({ success: true });
+  } catch (error) {
+    console.error("Error sending contact email:", error);
+    return c.json(
+      { success: false, error: "Failed to send contact email" },
       500
     );
   }

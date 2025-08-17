@@ -31,5 +31,5 @@ COPY --from=builder /app/pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile --prod
 
 # Expose port and run
-EXPOSE 3000
+EXPOSE ${PORT}
 CMD ["node", "dist/index.js"]

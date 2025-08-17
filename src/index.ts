@@ -8,6 +8,7 @@ import { captureException, flush } from "./instrument";
 import { metricsMiddleware } from "./middlewares/metricsMiddleware";
 import { register } from "prom-client";
 import { logginLokiMiddleware } from "./middlewares/logginLokiMiddleware";
+import { config } from "./config";
 dotenv.config();
 
 // Extend Hono Context to include custom variables
@@ -102,7 +103,7 @@ app.onError(async (err, c) => {
 serve(
   {
     fetch: app.fetch,
-    port: 3000,
+    port: config.app.port,
     hostname: "0.0.0.0",
   },
   (info) => {

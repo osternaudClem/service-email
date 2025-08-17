@@ -3,12 +3,14 @@ import {
   sendAfterMeetingEmail,
   sendCancelMeetingEmail,
   sendConfirmationEmail,
+  sendContactEmail,
   sendUpdateMeetingEmail,
 } from "./azelysse.controller";
 import { zodErrorHandler } from "../../utils/zodErrors";
 import { zValidator } from "@hono/zod-validator";
 import {
   AzelysseClientSchema,
+  AzelysseContactSchema,
   AzelysseMeetingSchema,
 } from "./azelysse.schemas";
 
@@ -36,6 +38,12 @@ router.post(
   "/send-confirmation",
   zValidator("json", AzelysseClientSchema, zodErrorHandler),
   sendAfterMeetingEmail
+);
+
+router.post(
+  "/send-contact",
+  zValidator("json", AzelysseContactSchema, zodErrorHandler),
+  sendContactEmail
 );
 
 export default router;

@@ -1,0 +1,9 @@
+services:
+  service-email:
+    build: .
+    container_name: service-email
+    env_file:
+      - .env
+    ports:
+      - "${PORT:-3000}:${PORT:-3000}"
+    restart: unless-stopped
