@@ -3,32 +3,34 @@ import {
   sendAfterMeetingEmail,
   sendCancelMeetingEmail,
   sendConfirmationEmail,
+  sendContactEmail,
   sendUpdateMeetingEmail,
 } from "./azelysse.controller";
 import { zodErrorHandler } from "../../utils/zodErrors";
 import { zValidator } from "@hono/zod-validator";
 import {
   AzelysseClientSchema,
+  AzelysseContactSchema,
   AzelysseMeetingSchema,
 } from "./azelysse.schemas";
 
 const router = new Hono();
 
 router.post(
-  "/new-metting",
-  zValidator("json", AzelysseMeetingSchema.shape.body, zodErrorHandler),
+  "/new-meeting",
+  zValidator("json", AzelysseMeetingSchema, zodErrorHandler),
   sendConfirmationEmail
 );
 
 router.post(
   "/update-meeting",
-  zValidator("json", AzelysseMeetingSchema.shape.body, zodErrorHandler),
+  zValidator("json", AzelysseMeetingSchema, zodErrorHandler),
   sendUpdateMeetingEmail
 );
 
 router.post(
   "/cancel-meeting",
-  zValidator("json", AzelysseMeetingSchema.shape.body, zodErrorHandler),
+  zValidator("json", AzelysseMeetingSchema, zodErrorHandler),
   sendCancelMeetingEmail
 );
 
@@ -36,6 +38,12 @@ router.post(
   "/send-review",
   zValidator("json", AzelysseClientSchema, zodErrorHandler),
   sendAfterMeetingEmail
+);
+
+router.post(
+  "/send-contact",
+  zValidator("json", AzelysseContactSchema, zodErrorHandler),
+  sendContactEmail
 );
 
 export default router;

@@ -8,9 +8,13 @@ export const accessMiddleware = (): MiddlewareHandler => {
   }
 
   return async (c, next) => {
+    if (c.req.path === "/metrics") {
+      return next();
+    }
     const clientKey = c.req.header("x-api-key");
 
     if (!clientKey || clientKey !== apiKey) {
+      console.error("Unauthorized access attempt");
       return c.json({ message: "Unauthorized" }, 401);
     }
 

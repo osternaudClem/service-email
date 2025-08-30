@@ -13,6 +13,8 @@ export const zodErrorHandler = <T>(
     const error = result.error;
     const data = JSON.parse(error.message);
 
+    console.error("Zod validation error:", error);
+
     return c.json(
       {
         success: false,

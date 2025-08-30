@@ -8,15 +8,14 @@ import { resend } from "../../lib/resend";
 import { FROM, INFORMATIONS, CONTENT } from "../../utils/azelysseUtils";
 import AfterMeeting from "../../emails/azelysse/AfterMeeting";
 import CancelMeeting from "../../emails/azelysse/CancelMeeting";
-import type { AzelysseMeeting } from "../../types/azelysse.types";
 import UpdateMeeting from "../../emails/azelysse/UpdateMeeting";
 
 export const sendConfirmationEmail = async (c: Context) => {
   try {
-    const meeting = await c.req.json();
+    const { meeting } = await c.req.json();
 
     const formatedDate = formatInTimeZone(
-      meeting.start_time,
+      new Date(meeting.start_time),
       "Europe/Paris",
       "EEEE dd MMMM yyyy à HH:mm",
       { locale: fr }
@@ -59,10 +58,10 @@ export const sendConfirmationEmail = async (c: Context) => {
 
 export const sendUpdateMeetingEmail = async (c: Context) => {
   try {
-    const meeting = await c.req.json();
+    const { meeting } = await c.req.json();
 
     const formatedDate = formatInTimeZone(
-      meeting.start_time,
+      new Date(meeting.start_time),
       "Europe/Paris",
       "EEEE dd MMMM yyyy à HH:mm",
       { locale: fr }
@@ -98,10 +97,10 @@ export const sendUpdateMeetingEmail = async (c: Context) => {
 
 export const sendCancelMeetingEmail = async (c: Context) => {
   try {
-    const meeting = await c.req.json();
+    const { meeting } = await c.req.json();
 
     const formatedDate = formatInTimeZone(
-      meeting.start_time,
+      new Date(meeting.start_time),
       "Europe/Paris",
       "EEEE dd MMMM yyyy à HH:mm",
       { locale: fr }
@@ -137,7 +136,7 @@ export const sendCancelMeetingEmail = async (c: Context) => {
 
 export const sendAfterMeetingEmail = async (c: Context) => {
   try {
-    const client = await c.req.json();
+    const { client } = await c.req.json();
 
     const html = await render(
       <AfterMeeting firstname={client.first_name} content={CONTENT} />,
@@ -158,6 +157,43 @@ export const sendAfterMeetingEmail = async (c: Context) => {
     console.error("Error sending after meeting email:", error);
     return c.json(
       { success: false, error: "Failed to send after meeting email" },
+      500
+    );
+  }
+};
+
+export const sendContactEmail = async (c: Context) => {
+  try {
+    const { first_name, last_name, email, message } = await c.req.json();
+
+    const html = await render(
+      <div>
+        <p>
+          Vous avez reçu un nouveau message de contact de{" "}
+          <strong>
+            {first_name} {last_name}
+          </strong>{" "}
+          :
+        </p>
+        <p>Email : {email}</p>
+        <p>Message : {message}</p>
+      </div>,
+      { pretty: true }
+    );
+
+    await resend.emails.send({
+      from: `Azelysse Piercing <${FROM}>`,
+      // to: [CONTENT.contact_email],
+      to: ["osternaud.clement@pm.me"],
+      subject: `[CONTACT] Nouveau message de contact de ${first_name} ${last_name}`,
+      html,
+    });
+
+    return c.json({ success: true });
+  } catch (error) {
+    console.error("Error sending contact email:", error);
+    return c.json(
+      { success: false, error: "Failed to send contact email" },
       500
     );
   }
