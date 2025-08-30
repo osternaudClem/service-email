@@ -1,8 +1,10 @@
 import { z } from "zod";
 
 export const AzelysseClientSchema = z.object({
-  first_name: z.string(),
-  email: z.email(),
+  client: z.object({
+    first_name: z.string(),
+    email: z.email(),
+  }),
 });
 
 export const AzelysseServiceSchema = z.object({
