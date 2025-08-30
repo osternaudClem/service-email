@@ -11,36 +11,6 @@ import CancelMeeting from "../../emails/azelysse/CancelMeeting";
 import type { AzelysseMeeting } from "../../types/azelysse.types";
 import UpdateMeeting from "../../emails/azelysse/UpdateMeeting";
 
-const CLIENT = {
-  first_name: "Clement",
-  email: "osternaud.clement@pm.me",
-};
-
-const MEETING: AzelysseMeeting = {
-  id: "e7b8c2a0-9f4e-4a7b-8e2d-1c2f3a4b5c6d", // Example UUID
-  start_time: new Date("2024-02-01T14:00:00Z"),
-  client: CLIENT,
-  prestations: [
-    {
-      service: {
-        name: "Pose de bijoux",
-        duration: 20,
-      },
-    },
-    {
-      service: {
-        name: "Acte de piercing",
-        duration: 20,
-      },
-      product: {
-        name: "Hélix",
-        price: 40,
-        aget_restriction: 16,
-      },
-    },
-  ],
-};
-
 export const sendConfirmationEmail = async (c: Context) => {
   try {
     const meeting = await c.req.json();
@@ -131,7 +101,7 @@ export const sendCancelMeetingEmail = async (c: Context) => {
     const meeting = await c.req.json();
 
     const formatedDate = formatInTimeZone(
-      MEETING.start_time,
+      meeting.start_time,
       "Europe/Paris",
       "EEEE dd MMMM yyyy à HH:mm",
       { locale: fr }
