@@ -35,7 +35,7 @@ router.post(
 );
 
 router.post(
-  "/send-confirmation",
+  "/send-review",
   zValidator("json", AzelysseClientSchema, zodErrorHandler),
   sendAfterMeetingEmail
 );
