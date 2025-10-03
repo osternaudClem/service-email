@@ -2,7 +2,9 @@ import { z } from "zod";
 
 export const AzelysseClientSchema = z.object({
   first_name: z.string(),
-  email: z.email(),
+  email: z.string().refine((val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val), {
+    message: "Invalid email address",
+  }),
 });
 
 export const AzelysseServiceSchema = z.object({
@@ -13,7 +15,7 @@ export const AzelysseServiceSchema = z.object({
 export const AzelysseProductSchema = z.object({
   name: z.string(),
   price: z.number(),
-  aget_restriction: z.number().optional(),
+  age_restriction: z.number().optional(),
 });
 
 export const AzelyssePrestationSchema = z.object({
@@ -34,6 +36,8 @@ export const AzelysseMeetingSchema = z.object({
 export const AzelysseContactSchema = z.object({
   first_name: z.string(),
   last_name: z.string(),
-  email: z.email(),
+  email: z.string().refine((val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val), {
+    message: "Invalid email address",
+  }),
   message: z.string().min(1, "Message cannot be empty"),
 });
