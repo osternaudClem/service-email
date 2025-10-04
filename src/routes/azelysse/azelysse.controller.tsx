@@ -187,6 +187,7 @@ export const sendContactEmail = async (c: Context) => {
       to: ["osternaud.clement@pm.me"],
       subject: `[CONTACT] Nouveau message de contact de ${first_name} ${last_name}`,
       html,
+      replyTo: `${first_name} ${last_name} <${email}>`,
     });
 
     return c.json({ success: true });
