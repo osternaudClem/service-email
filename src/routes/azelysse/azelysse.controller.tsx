@@ -183,8 +183,7 @@ export const sendContactEmail = async (c: Context) => {
 
     await resend.emails.send({
       from: `Azelysse Piercing <${FROM}>`,
-      // to: [CONTENT.contact_email],
-      to: ["osternaud.clement@pm.me"],
+      to: [CONTENT.contact_email],
       subject: `[CONTACT] Nouveau message de contact de ${first_name} ${last_name}`,
       html,
       replyTo: `${first_name} ${last_name} <${email}>`,
