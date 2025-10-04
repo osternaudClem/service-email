@@ -1,5 +1,6 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
+import { cors } from "hono/cors";
 import dotenv from "dotenv";
 import { routes } from "./routes";
 import { logger } from "hono/logger";
@@ -9,6 +10,7 @@ import { metricsMiddleware } from "./middlewares/metricsMiddleware";
 import { register } from "prom-client";
 import { logginLokiMiddleware } from "./middlewares/logginLokiMiddleware";
 import { config } from "./config";
+
 dotenv.config();
 
 // Extend Hono Context to include custom variables
@@ -20,6 +22,15 @@ declare module "hono" {
 }
 
 const app = new Hono();
+
+app.use(
+  "*",
+  cors({
+    origin: ["https://azelysse.fr", "http://localhost:3000"],
+    allowMethods: ["GET", "POST", "OPTIONS"],
+    allowHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 app.use("*", async (c, next) => {
   let body = null;
